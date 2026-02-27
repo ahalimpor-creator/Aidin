@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="fa" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل مدیریت سرور</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Vazirmatn', sans-serif; }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
+    }
+    
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes count-up {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
+    .animate-count { animation: count-up 0.3s ease-out; }
+    .pulse-online { animation: pulse-glow 2s ease-in-out infinite; }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .progress-bar {
+      background: linear-gradient(90deg, #10b981, #34d399);
+      transition: width 0.5s ease-out;
+    }
+    
+    .sidebar-item:hover {
+      background: rgba(16, 185, 129, 0.1);
+      border-right: 3px solid #10b981;
+    }
+    
+    .sidebar-item.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-right: 3px solid #10b981;
+    }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1e293b; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-slate-900 text-slate-100 overflow-auto">
+  <div class="flex h-full w-full"><!-- Sidebar -->
+   <aside class="w-64 bg-slate-800 border-l border-slate-700 flex flex-col"><!-- Logo -->
+    <div class="p-6 border-b border-slate-700">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center pulse-online">
+       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+       </svg>
+      </div>
+      <div>
+       <h1 id="dashboard-title" class="font-bold text-lg text-white">پنل سرور</h1><span class="text-xs text-emerald-400">● آنلاین</span>
+      </div>
+     </div>
+    </div><!-- Navigation -->
+    <nav class="flex-1 p-4 space-y-1"><button onclick="showSection('dashboard')" class="sidebar-item active w-full flex items-center gap-3 px-4 py-3 rounded-lg text-right transition-all" data-section="dashboard">
+      <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+      </svg><span>داشبورد</span> </button> <button onclick="showSection('users')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-right transition-all" data-section="users">
+      <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg><span>کاربران</span> </button> <button onclick="showSection('services')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-right transition-all" data-section="services">
+      <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg><span>سرویس‌ها</span> </button> <button onclick="showSection('logs')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-right transition-all" data-section="logs">
+      <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg><span>لاگ‌ها</span> </button> <button onclick="showSection('settings')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-right transition-all" data-section="settings">
+      <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg><span>تنظیمات</span> </button>
+    </nav><!-- User Profile -->
+    <div class="p-4 border-t border-slate-700">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold">
+       ا
+      </div>
+      <div class="flex-1">
+       <p class="font-medium text-sm">ادمین</p>
+       <p class="text-xs text-slate-400">مدیر سیستم</p>
+      </div><button class="p-2 hover:bg-slate-700 rounded-lg transition-colors">
+       <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+       </svg></button>
+     </div>
+    </div>
+   </aside><!-- Main Content -->
+   <main class="flex-1 overflow-auto"><!-- Header -->
+    <header class="bg-slate-800/50 backdrop-blur border-b border-slate-700 px-6 py-4 sticky top-0 z-10">
+     <div class="flex items-center justify-between">
+      <div>
+       <h2 id="section-title" class="text-xl font-bold">داشبورد</h2>
+       <p id="server-name" class="text-sm text-slate-400">سرور اصلی</p>
+      </div>
+      <div class="flex items-center gap-4"><!-- Search -->
+       <div class="relative"><input type="text" placeholder="جستجو..." class="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 pr-10 text-sm focus:outline-none focus:border-emerald-500 w-64">
+        <svg class="w-5 h-5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+       </div><!-- Notifications --> <button class="relative p-2 hover:bg-slate-700 rounded-lg transition-colors">
+        <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span> </button>
+      </div>
+     </div>
+    </header><!-- Content Sections -->
+    <div class="p-6"><!-- Dashboard Section -->
+     <section id="dashboard-section" class="space-y-6"><!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"><!-- CPU -->
+       <div class="glass-card rounded-2xl p-5 animate-slide-up" style="animation-delay: 0.1s">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+          </svg>
+         </div><span class="text-emerald-400 text-sm font-medium">+۲.۵٪</span>
+        </div>
+        <p class="text-slate-400 text-sm mb-1">پردازنده</p>
+        <p id="cpu-value" class="text-2xl font-bold">۴۵٪</p>
+        <div class="mt-3 h-2 bg-slate-700 rounded-full overflow-hidden">
+         <div id="cpu-bar" class="progress-bar h-full rounded-full" style="width: 45%"></div>
+        </div>
+       </div><!-- RAM -->
+       <div class="glass-card rounded-2xl p-5 animate-slide-up" style="animation-delay: 0.2s">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+         </div><span class="text-amber-400 text-sm font-medium">۶.۲ GB</span>
+        </div>
+        <p class="text-slate-400 text-sm mb-1">حافظه RAM</p>
+        <p id="ram-value" class="text-2xl font-bold">۷۸٪</p>
+        <div class="mt-3 h-2 bg-slate-700 rounded-full overflow-hidden">
+         <div id="ram-bar" class="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500" style="width: 78%"></div>
+        </div>
+       </div><!-- Disk -->
+       <div class="glass-card rounded-2xl p-5 animate-slide-up" style="animation-delay: 0.3s">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+          </svg>
+         </div><span class="text-slate-400 text-sm font-medium">۲۵۶ GB</span>
+        </div>
+        <p class="text-slate-400 text-sm mb-1">فضای دیسک</p>
+        <p id="disk-value" class="text-2xl font-bold">۶۲٪</p>
+        <div class="mt-3 h-2 bg-slate-700 rounded-full overflow-hidden">
+         <div id="disk-bar" class="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-500" style="width: 62%"></div>
+        </div>
+       </div><!-- Network -->
+       <div class="glass-card rounded-2xl p-5 animate-slide-up" style="animation-delay: 0.4s">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+          </svg>
+         </div><span class="text-emerald-400 text-sm font-medium">● فعال</span>
+        </div>
+        <p class="text-slate-400 text-sm mb-1">شبکه</p>
+        <p id="network-value" class="text-2xl font-bold">۱.۲ Gbps</p>
+        <div class="mt-3 flex gap-4 text-xs"><span class="text-emerald-400">↓ ۴۵۶ MB/s</span> <span class="text-blue-400">↑ ۱۲۳ MB/s</span>
+        </div>
+       </div>
+      </div><!-- Charts Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><!-- Traffic Chart -->
+       <div class="glass-card rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-6">
+         <h3 class="font-bold text-lg">ترافیک شبکه</h3><select class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-1 text-sm"> <option>۲۴ ساعت گذشته</option> <option>۷ روز گذشته</option> <option>۳۰ روز گذشته</option> </select>
+        </div>
+        <div class="h-48 flex items-end gap-2">
+         <div class="flex-1 flex flex-col items-center gap-1">
+          <div class="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-lg" style="height: 60%"></div><span class="text-xs text-slate-400">۰۰</span>
+         </div>
+         <div class="flex-1 flex flex-col items-center gap-1">
+          <div class="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-lg" style="height: 45%"></div><span class="text-xs text-slate-400">۰۴</span>
+         </div>
+         <div class="flex-1 flex flex-col items-center gap-1">
+          <div class="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-lg" style="height: 30%"></div><span class="text-xs text-slate-400">۰۸</span>
+         </div>
+         <div class="flex-1 flex flex-col items-center gap-1">
+          <div class="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-lg" style="height: 75%"></div><span class="text-xs text-slate-400">۱۲</span>
+         </div>
+         <div class="flex-1 flex flex-col items-center gap-1">
+          <div class="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-lg" style="height: 90%"></div><span class="text-xs text-slate-400">۱۶</span>
+         </div>
+         <div class="flex-1 flex flex-col items-center gap-1">
+          <div class="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-lg" style="height: 85%"></div><span class="text-xs text-slate-400">۲۰</span>
+         </div>
+         <div class="flex-1 flex flex-col items-center gap-1">
+          <div class="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-lg animate-pulse" style="height: 70%"></div><span class="text-xs text-slate-400">اکنون</span>
+         </div>
+        </div>
+       </div><!-- Active Services -->
+       <div class="glass-card rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-6">
+         <h3 class="font-bold text-lg">سرویس‌های فعال</h3><span class="text-emerald-400 text-sm">۶ از ۸</span>
+        </div>
+        <div class="space-y-3">
+         <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
+          <div class="flex items-center gap-3">
+           <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div><span>Nginx</span>
+          </div><span class="text-xs text-slate-400">در حال اجرا</span>
+         </div>
+         <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
+          <div class="flex items-center gap-3">
+           <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div><span>MySQL</span>
+          </div><span class="text-xs text-slate-400">در حال اجرا</span>
+         </div>
+         <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
+          <div class="flex items-center gap-3">
+           <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div><span>Redis</span>
+          </div><span class="text-xs text-slate-400">در حال اجرا</span>
+         </div>
+         <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
+          <div class="flex items-center gap-3">
+           <div class="w-3 h-3 rounded-full bg-red-500"></div><span>Docker</span>
+          </div><span class="text-xs text-red-400">متوقف</span>
+         </div>
+        </div>
+       </div>
+      </div><!-- Recent Activity -->
+      <div class="glass-card rounded-2xl p-6">
+       <div class="flex items-center justify-between mb-6">
+        <h3 class="font-bold text-lg">فعالیت‌های اخیر</h3><button class="text-emerald-400 text-sm hover:underline">مشاهده همه</button>
+       </div>
+       <div class="overflow-x-auto">
+        <table class="w-full">
+         <thead>
+          <tr class="text-slate-400 text-sm border-b border-slate-700">
+           <th class="text-right pb-3 font-medium">رویداد</th>
+           <th class="text-right pb-3 font-medium">کاربر</th>
+           <th class="text-right pb-3 font-medium">IP</th>
+           <th class="text-right pb-3 font-medium">زمان</th>
+           <th class="text-right pb-3 font-medium">وضعیت</th>
+          </tr>
+         </thead>
+         <tbody class="text-sm">
+          <tr class="border-b border-slate-700/50">
+           <td class="py-4">ورود به سیستم</td>
+           <td class="py-4"> آیدین</td>
+           <td class="py-4 font-mono text-slate-400">192.168.1.105</td>
+           <td class="py-4 text-slate-400">۲ دقیقه پیش</td>
+           <td class="py-4"><span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs">موفق</span></td>
+          </tr>
+          <tr class="border-b border-slate-700/50">
+           <td class="py-4">تغییر رمز عبور</td>
+           <td class="py-4">حسین</td>
+           <td class="py-4 font-mono text-slate-400">192.168.1.87</td>
+           <td class="py-4 text-slate-400">۱۵ دقیقه پیش</td>
+           <td class="py-4"><span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs">موفق</span></td>
+          </tr>
+          <tr class="border-b border-slate-700/50">
+           <td class="py-4">تلاش ورود ناموفق</td>
+           <td class="py-4">ناشناس</td>
+           <td class="py-4 font-mono text-slate-400">45.33.32.156</td>
+           <td class="py-4 text-slate-400">۳۰ دقیقه پیش</td>
+           <td class="py-4"><span class="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs">ناموفق</span></td>
+          </tr>
+          <tr>
+           <td class="py-4">راه‌اندازی مجدد سرویس</td>
+           <td class="py-4">سیستم</td>
+           <td class="py-4 font-mono text-slate-400">localhost</td>
+           <td class="py-4 text-slate-400">۱ ساعت پیش</td>
+           <td class="py-4"><span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">اطلاع</span></td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+      </div>
+     </section><!-- Users Section -->
+     <section id="users-section" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+       <h3 class="text-xl font-bold">مدیریت کاربران</h3><button onclick="openUserModal()" class="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg><span>افزودن کاربر</span> </button>
+      </div>
+      <div class="glass-card rounded-2xl overflow-hidden">
+       <table class="w-full">
+        <thead class="bg-slate-800/50">
+         <tr class="text-slate-400 text-sm">
+          <th class="text-right p-4 font-medium">کاربر</th>
+          <th class="text-right p-4 font-medium">ایمیل</th>
+          <th class="text-right p-4 font-medium">نقش</th>
+          <th class="text-right p-4 font-medium">وضعیت</th>
+          <th class="text-right p-4 font-medium">عملیات</th>
+         </tr>
+        </thead>
+        <tbody id="users-table-body"><!-- Users will be rendered here -->
+        </tbody>
+       </table>
+      </div>
+     </section><!-- Services Section -->
+     <section id="services-section" class="hidden space-y-6">
+      <h3 class="text-xl font-bold">مدیریت سرویس‌ها</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="services-container"><!-- Services will be rendered here -->
+      </div>
+     </section><!-- Logs Section -->
+     <section id="logs-section" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+       <h3 class="text-xl font-bold">لاگ‌های سیستم</h3>
+       <div class="flex gap-2"><select id="log-filter" class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm"> <option value="all">همه</option> <option value="error">خطا</option> <option value="warning">هشدار</option> <option value="info">اطلاعات</option> </select> <button onclick="clearLogs()" class="bg-red-500/20 text-red-400 hover:bg-red-500/30 px-4 py-2 rounded-lg transition-colors">پاک کردن</button>
+       </div>
+      </div>
+      <div class="glass-card rounded-2xl p-4 font-mono text-sm max-h-96 overflow-auto" id="logs-container"><!-- Logs will be rendered here -->
+      </div>
+     </section><!-- Settings Section -->
+     <section id="settings-section" class="hidden space-y-6">
+      <h3 class="text-xl font-bold">تنظیمات سرور</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+       <div class="glass-card rounded-2xl p-6">
+        <h4 class="font-bold mb-4">تنظیمات عمومی</h4>
+        <div class="space-y-4">
+         <div><label class="block text-sm text-slate-400 mb-2">نام سرور</label> <input type="text" value="سرور اصلی" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500">
+         </div>
+         <div><label class="block text-sm text-slate-400 mb-2">منطقه زمانی</label> <select class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500"> <option>Asia/Tehran (UTC+3:30)</option> <option>UTC</option> <option>Europe/London</option> </select>
+         </div>
+         <div><label class="block text-sm text-slate-400 mb-2">زبان</label> <select class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500"> <option>فارسی</option> <option>English</option> </select>
+         </div>
+        </div>
+       </div>
+       <div class="glass-card rounded-2xl p-6">
+        <h4 class="font-bold mb-4">تنظیمات امنیتی</h4>
+        <div class="space-y-4">
+         <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
+          <div>
+           <p class="font-medium">احراز هویت دو مرحله‌ای</p>
+           <p class="text-sm text-slate-400">افزایش امنیت حساب</p>
+          </div><label class="relative inline-flex items-center cursor-pointer"> <input type="checkbox" class="sr-only peer" checked>
+           <div class="w-11 h-6 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:-translate-x-full rtl:peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div></label>
+         </div>
+         <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
+          <div>
+           <p class="font-medium">اعلان‌های ایمیلی</p>
+           <p class="text-sm text-slate-400">دریافت هشدارهای امنیتی</p>
+          </div><label class="relative inline-flex items-center cursor-pointer"> <input type="checkbox" class="sr-only peer" checked>
+           <div class="w-11 h-6 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:-translate-x-full rtl:peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div></label>
+         </div>
+         <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
+          <div>
+           <p class="font-medium">محدودیت IP</p>
+           <p class="text-sm text-slate-400">دسترسی فقط از IPهای مجاز</p>
+          </div><label class="relative inline-flex items-center cursor-pointer"> <input type="checkbox" class="sr-only peer">
+           <div class="w-11 h-6 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:-translate-x-full rtl:peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div></label>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="flex justify-end gap-3"><button class="px-6 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">لغو</button> <button class="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors">ذخیره تغییرات</button>
+      </div>
+     </section>
+    </div>
+   </main>
+  </div><!-- Add User Modal -->
+  <div id="user-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
+   <div class="bg-slate-800 rounded-2xl p-6 w-full max-w-md mx-4 animate-slide-up">
+    <div class="flex items-center justify-between mb-6">
+     <h3 class="text-xl font-bold">افزودن کاربر جدید</h3><button onclick="closeUserModal()" class="p-2 hover:bg-slate-700 rounded-lg transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg></button>
+    </div>
+    <form id="user-form" class="space-y-4">
+     <div><label class="block text-sm text-slate-400 mb-2">نام کامل</label> <input type="text" name="name" required class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500">
+     </div>
+     <div><label class="block text-sm text-slate-400 mb-2">ایمیل</label> <input type="email" name="email" required class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500">
+     </div>
+     <div><label class="block text-sm text-slate-400 mb-2">نقش</label> <select name="role" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500"> <option value="user">کاربر</option> <option value="admin">مدیر</option> <option value="moderator">ناظر</option> </select>
+     </div>
+     <div class="flex gap-3 pt-4"><button type="button" onclick="closeUserModal()" class="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">لغو</button> <button type="submit" class="flex-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors">افزودن</button>
+     </div>
+    </form>
+   </div>
+  </div><!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-4 left-4 z-50 space-y-2"></div>
+  <script>
+    // Default configuration
+    const defaultConfig = {
+      dashboard_title: 'پنل سرور',
+      server_name: 'سرور اصلی',
+      background_color: '#0f172a',
+      surface_color: '#1e293b',
+      text_color: '#f1f5f9',
+      primary_action_color: '#10b981',
+      secondary_action_color: '#8b5cf6',
+      font_family: 'Vazirmatn',
+      font_size: 16
+    };
+
+    // Sample data
+    const users = [
+      { id: 1, name: ' آیدین', email: 'ali@example.com', role: 'admin', status: 'active', avatar: 'ع' },
+      { id: 2, name: ' حسین', email: 'sara@example.com', role: 'user', status: 'active', avatar: 'س' },
+      { id: 3, name: 'ماریا', email: 'reza@example.com', role: 'moderator', status: 'inactive', avatar: 'ر' },
+      { id: 4, name: 'پریا', email: 'maryam@example.com', role: 'user', status: 'active', avatar: 'م' }
+    ];
+
+    const services = [
+      { name: 'Nginx', status: 'running', port: 80, uptime: '۱۵ روز' },
+      { name: 'MySQL', status: 'running', port: 3306, uptime: '۱۵ روز' },
+      { name: 'Redis', status: 'running', port: 6379, uptime: '۱۰ روز' },
+      { name: 'Docker', status: 'stopped', port: 2375, uptime: '-' },
+      { name: 'PHP-FPM', status: 'running', port: 9000, uptime: '۱۵ روز' },
+      { name: 'SSH', status: 'running', port: 22, uptime: '۱۵ روز' }
+    ];
+
+    const logs = [
+      { type: 'error', message: '[ERROR] Connection refused to database server', time: '14:32:15' },
+      { type: 'warning', message: '[WARN] High memory usage detected (85%)', time: '14:30:22' },
+      { type: 'info', message: '[INFO] User authentication successful', time: '14:28:45' },
+      { type: 'info', message: '[INFO] Nginx configuration reloaded', time: '14:25:10' },
+      { type: 'error', message: '[ERROR] Failed to write to log file', time: '14:20:33' },
+      { type: 'warning', message: '[WARN] SSL certificate expires in 7 days', time: '14:15:00' },
+      { type: 'info', message: '[INFO] Backup completed successfully', time: '14:00:00' }
+    ];
+
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          document.getElementById('dashboard-title').textContent = config.dashboard_title || defaultConfig.dashboard_title;
+          document.getElementById('server-name').textContent = config.server_name || defaultConfig.server_name;
+          
+          const fontFamily = config.font_family || defaultConfig.font_family;
+          document.body.style.fontFamily = `${fontFamily}, sans-serif`;
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => { config.background_color = value; window.elementSdk.setConfig({ background_color: value }); }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => { config.surface_color = value; window.elementSdk.setConfig({ surface_color: value }); }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => { config.text_color = value; window.elementSdk.setConfig({ text_color: value }); }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => { config.primary_action_color = value; window.elementSdk.setConfig({ primary_action_color: value }); }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (value) => { config.secondary_action_color = value; window.elementSdk.setConfig({ secondary_action_color: value }); }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => { config.font_family = value; window.elementSdk.setConfig({ font_family: value }); }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => { config.font_size = value; window.elementSdk.setConfig({ font_size: value }); }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['dashboard_title', config.dashboard_title || defaultConfig.dashboard_title],
+          ['server_name', config.server_name || defaultConfig.server_name]
+        ])
+      });
+    }
+
+    // Section Navigation
+    function showSection(sectionName) {
+      // Hide all sections
+      document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+      
+      // Show selected section
+      const section = document.getElementById(`${sectionName}-section`);
+      if (section) section.classList.remove('hidden');
+      
+      // Update sidebar active state
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('svg').classList.remove('text-emerald-400');
+        item.querySelector('svg').classList.add('text-slate-400');
+      });
+      
+      const activeItem = document.querySelector(`[data-section="${sectionName}"]`);
+      if (activeItem) {
+        activeItem.classList.add('active');
+        activeItem.querySelector('svg').classList.remove('text-slate-400');
+        activeItem.querySelector('svg').classList.add('text-emerald-400');
+      }
+      
+      // Update header title
+      const titles = {
+        dashboard: 'داشبورد',
+        users: 'مدیریت کاربران',
+        services: 'سرویس‌ها',
+        logs: 'لاگ‌های سیستم',
+        settings: 'تنظیمات'
+      };
+      document.getElementById('section-title').textContent = titles[sectionName] || 'داشبورد';
+    }
+
+    // Render Users Table
+    function renderUsers() {
+      const tbody = document.getElementById('users-table-body');
+      tbody.innerHTML = users.map(user => `
+        <tr class="border-b border-slate-700/50 hover:bg-slate-800/30 transition-colors">
+          <td class="p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                ${user.avatar}
+              </div>
+              <span>${user.name}</span>
+            </div>
+          </td>
+          <td class="p-4 text-slate-400">${user.email}</td>
+          <td class="p-4">
+            <span class="px-2 py-1 rounded-full text-xs ${
+              user.role === 'admin' ? 'bg-red-500/20 text-red-400' :
+              user.role === 'moderator' ? 'bg-amber-500/20 text-amber-400' :
+              'bg-slate-500/20 text-slate-400'
+            }">
+              ${user.role === 'admin' ? 'مدیر' : user.role === 'moderator' ? 'ناظر' : 'کاربر'}
+            </span>
+          </td>
+          <td class="p-4">
+            <span class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full ${user.status === 'active' ? 'bg-emerald-500' : 'bg-slate-500'}"></span>
+              ${user.status === 'active' ? 'فعال' : 'غیرفعال'}
+            </span>
+          </td>
+          <td class="p-4">
+            <div class="flex gap-2">
+              <button class="p-2 hover:bg-slate-700 rounded-lg transition-colors" title="ویرایش">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+              </button>
+              <button onclick="deleteUser(${user.id})" class="p-2 hover:bg-red-500/20 rounded-lg transition-colors" title="حذف">
+                <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Render Services
+    function renderServices() {
+      const container = document.getElementById('services-container');
+      container.innerHTML = services.map(service => `
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl ${service.status === 'running' ? 'bg-emerald-500/20' : 'bg-red-500/20'} flex items-center justify-center">
+                <svg class="w-6 h-6 ${service.status === 'running' ? 'text-emerald-400' : 'text-red-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-bold">${service.name}</h4>
+                <p class="text-sm text-slate-400">پورت: ${service.port}</p>
+              </div>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs ${service.status === 'running' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}">
+              ${service.status === 'running' ? 'در حال اجرا' : 'متوقف'}
+            </span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-400">زمان فعالیت: ${service.uptime}</span>
+            <div class="flex gap-2">
+              <button onclick="toggleService('${service.name}')" class="px-3 py-1 ${service.status === 'running' ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'} rounded-lg transition-colors">
+                ${service.status === 'running' ? 'توقف' : 'شروع'}
+              </button>
+              <button class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">
+                راه‌اندازی مجدد
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render Logs
+    function renderLogs(filter = 'all') {
+      const container = document.getElementById('logs-container');
+      const filteredLogs = filter === 'all' ? logs : logs.filter(log => log.type === filter);
+      
+      container.innerHTML = filteredLogs.map(log => `
+        <div class="flex gap-3 p-2 ${
+          log.type === 'error' ? 'text-red-400' :
+          log.type === 'warning' ? 'text-amber-400' :
+          'text-slate-300'
+        }">
+          <span class="text-slate-500">${log.time}</span>
+          <span>${log.message}</span>
+        </div>
+      `).join('');
+    }
+
+    // User Modal Functions
+    function openUserModal() {
+      const modal = document.getElementById('user-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeUserModal() {
+      const modal = document.getElementById('user-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.getElementById('user-form').reset();
+    }
+
+    // Delete User
+    function deleteUser(id) {
+      const index = users.findIndex(u => u.id === id);
+      if (index > -1) {
+        users.splice(index, 1);
+        renderUsers();
+        showToast('کاربر با موفقیت حذف شد', 'success');
+      }
+    }
+
+    // Toggle Service
+    function toggleService(name) {
+      const service = services.find(s => s.name === name);
+      if (service) {
+        service.status = service.status === 'running' ? 'stopped' : 'running';
+        service.uptime = service.status === 'running' ? '۰ دقیقه' : '-';
+        renderServices();
+        showToast(`سرویس ${name} ${service.status === 'running' ? 'شروع' : 'متوقف'} شد`, 'success');
+      }
+    }
+
+    // Clear Logs
+    function clearLogs() {
+      logs.length = 0;
+      renderLogs();
+      showToast('لاگ‌ها پاک شدند', 'success');
+    }
+
+    // Toast Notification
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `px-4 py-3 rounded-lg flex items-center gap-3 animate-slide-up ${
+        type === 'success' ? 'bg-emerald-500/90' :
+        type === 'error' ? 'bg-red-500/90' :
+        'bg-slate-700'
+      }`;
+      toast.innerHTML = `
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          ${type === 'success' 
+            ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>'
+            : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+          }
+        </svg>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Form Submit Handler
+    document.getElementById('user-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const newUser = {
+        id: users.length + 1,
+        name: formData.get('name'),
+        email: formData.get('email'),
+        role: formData.get('role'),
+        status: 'active',
+        avatar: formData.get('name').charAt(0)
+      };
+      users.push(newUser);
+      renderUsers();
+      closeUserModal();
+      showToast('کاربر جدید اضافه شد', 'success');
+    });
+
+    // Log Filter Handler
+    document.getElementById('log-filter').addEventListener('change', function(e) {
+      renderLogs(e.target.value);
+    });
+
+    // Simulate real-time stats updates
+    function updateStats() {
+      const cpuValue = Math.floor(Math.random() * 30) + 35;
+      const ramValue = Math.floor(Math.random() * 15) + 70;
+      
+      document.getElementById('cpu-value').textContent = `٪${cpuValue.toLocaleString('fa-IR')}`;
+      document.getElementById('cpu-bar').style.width = `${cpuValue}%`;
+      
+      document.getElementById('ram-value').textContent = `٪${ramValue.toLocaleString('fa-IR')}`;
+      document.getElementById('ram-bar').style.width = `${ramValue}%`;
+    }
+
+    // Initialize
+    renderUsers();
+    renderServices();
+    renderLogs();
+    
+    // Update stats every 5 seconds
+    setInterval(updateStats, 5000);
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d4a5e4604a0871b',t:'MTc3MjIyMzQ3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
